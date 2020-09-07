@@ -1,7 +1,28 @@
 const express = require("express");
+const morgan = require("morgan")
 const { response } = require("express");
 const app = express();
+
+
+morgan.token('req-headers', function(req,res){
+    return JSON.stringify(req.headers)
+   })
 app.use(express.json());
+
+morgan.token('body',(req,res)=>{return JSON.stringify(req.body)})
+app.use(morgan((tokens,req,res)=>{
+    return [
+        tokens.method(req,res),
+        tokens.url(req,res),
+        tokens.status(req,res),
+        tokens.req(req,res, 'content-length'), '-',
+        tokens['response-time'](req,res),'ms',
+        tokens['body'](req,res)
+    ].join(' ')
+}))
+
+
+
 let data = [
   {
     name: "Arto Hellas",
@@ -88,6 +109,14 @@ app.get("/info", (req, res) => {
 });
 
 const PORT = 3001;
+
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+  }
+  
+  app.use(unknownEndpoint)
+
+
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
