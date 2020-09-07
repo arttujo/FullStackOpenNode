@@ -1,6 +1,8 @@
 const express = require("express");
 const morgan = require("morgan")
-const { response } = require("express");
+const cors = require('cors')
+const PORT = process.env.PORT || 3001;
+
 const app = express();
 
 
@@ -8,7 +10,7 @@ morgan.token('req-headers', function(req,res){
     return JSON.stringify(req.headers)
    })
 app.use(express.json());
-
+app.use(cors())
 morgan.token('body',(req,res)=>{return JSON.stringify(req.body)})
 app.use(morgan((tokens,req,res)=>{
     return [
@@ -108,7 +110,6 @@ app.get("/info", (req, res) => {
   res.send(string + "<br>" + "<br>" + time);
 });
 
-const PORT = 3001;
 
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
