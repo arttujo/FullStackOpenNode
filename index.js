@@ -4,7 +4,7 @@ const cors = require('cors')
 const PORT = process.env.PORT || 3001;
 
 const app = express();
-
+app.use(express.static('build'))
 
 morgan.token('req-headers', function(req,res){
     return JSON.stringify(req.headers)
